@@ -16,11 +16,8 @@ function makeFilterable(table) {
     var input = document.createElement("input");
     input.name = "search";
     input.type = "text";
-    var button = document.createElement("button");
-    button.innerHTML = "过滤"
     table.appendChild(input);
-    table.appendChild(button);//添加input和button控件
-    table.getElementsByTagName("button")[0].onclick = function() {
+    table.getElementsByTagName("input")[0].oninput = function() {
         var keyContent = table.getElementsByTagName("input")[0].value;
         filter(keyContent, table);
     };
@@ -45,9 +42,9 @@ function makeSortable(table) {
     return table;
 }
 function filter(keyContent, table) {
-    var removeTrs = []//将要移除的tr暂存在此处
     var tbody = table.getElementsByTagName("tbody")[0];
     var trs = tbody.getElementsByTagName("tr");
+    initTrs(trs);//初始化tr，将上一次去除的行重新显示出来
     for (var i = 0 ; i < trs.length ; ++i) {
         var tds = trs[i].getElementsByTagName("td");
         var hasKey = false;
@@ -59,11 +56,13 @@ function filter(keyContent, table) {
             }
         }
         if (hasKey == false) {
-            removeTrs.push(trs[i]);
+            trs[i].className += " display_none";//没有关键词的行填上display:none的属性
         }
     }
-    for (var i = 0 ; i < removeTrs.length ; ++i) {
-        tbody.removeChild(removeTrs[i]);//移除不含关键字的tr
+}
+function initTrs(trs) {
+    for (var i = 0 ; i < trs.length ; ++i) {
+        trs[i].className = trs[i].className.replace("display_none", "");
     }
 }
 function highlight(inner_html, keyContent) {
